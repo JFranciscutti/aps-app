@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/aps-app/static/css/main.d9800d6f.css",
+    "main.js": "/aps-app/static/js/main.22975e4e.js",
+    "static/js/787.2bf116e8.chunk.js": "/aps-app/static/js/787.2bf116e8.chunk.js",
+    "index.html": "/aps-app/index.html",
+    "main.d9800d6f.css.map": "/aps-app/static/css/main.d9800d6f.css.map",
+    "main.22975e4e.js.map": "/aps-app/static/js/main.22975e4e.js.map",
+    "787.2bf116e8.chunk.js.map": "/aps-app/static/js/787.2bf116e8.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d9800d6f.css",
+    "static/js/main.22975e4e.js"
+  ]
+}
