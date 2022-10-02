@@ -1,5 +1,6 @@
 {
   "name": "aps-app",
+  "homepage": "https://jfranciscutti.github.io/aps-app/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -32,7 +33,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -54,6 +57,7 @@
   },
   "devDependencies": {
     "@types/react-router-dom": "^5.3.3",
-    "@types/sqlite3": "^3.1.8"
+    "@types/sqlite3": "^3.1.8",
+    "gh-pages": "^4.0.0"
   }
 }
