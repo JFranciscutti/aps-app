@@ -1,24 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Home from './components/Home';
+import Login from './components/Login';
+import PasswordRecovery from './components/PasswordRecovery';
+import SignUp from './components/SignUp';
+import { Routes } from './utils/Routes';
+import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Router>
+        <Switch>
+          <Route exact path="/">
+            {/* TODO: Si está logueado, va al home. Sino, al login */}
+            <Redirect to={Routes.LOGIN} />
+          </Route>
+
+          <Route exact path={Routes.LOGIN}>
+            <Login />
+          </Route>
+
+          <Route exact path={Routes.SIGNUP}>
+            <SignUp />
+          </Route>
+
+          <Route exact path={Routes.PASSWORD_RECOVERY}>
+            <PasswordRecovery />
+          </Route>
+
+          <Route exact path={Routes.HOME}>
+            <Home />
+          </Route>
+
+        </Switch>
+      </Router>
     </div>
   );
 }
