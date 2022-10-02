@@ -16,9 +16,7 @@ function App() {
             <Redirect to={Routes.LOGIN} />
           </Route>
 
-          <Route path={Routes.LOGIN}>
-            <Login />
-          </Route>
+          <Route path={Routes.LOGIN} component={Login} />
 
           <Route path={Routes.SIGNUP}>
             <SignUp />
