@@ -11,24 +11,24 @@ function App() {
     <div className="App">
       <Router>
         <Switch>
-          <Route exact path="/">
+          <Route path="/">
             {/* TODO: Si está logueado, va al home. Sino, al login */}
             <Redirect to={Routes.LOGIN} />
           </Route>
 
-          <Route exact path={Routes.LOGIN}>
+          <Route path={Routes.LOGIN}>
             <Login />
           </Route>
 
-          <Route exact path={Routes.SIGNUP}>
+          <Route path={Routes.SIGNUP}>
             <SignUp />
           </Route>
 
-          <Route exact path={Routes.PASSWORD_RECOVERY}>
+          <Route path={Routes.PASSWORD_RECOVERY}>
             <PasswordRecovery />
           </Route>
 
-          <Route exact path={Routes.HOME}>
+          <Route path={Routes.HOME}>
             <Home />
           </Route>
 
