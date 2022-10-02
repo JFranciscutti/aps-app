@@ -11,18 +11,26 @@ function App() {
     <div className="App">
       <Router>
         <Switch>
-          <Route exact path="/">
+          <Route exact path="/aps-app/">
             {/* TODO: Si está logueado, va al home. Sino, al login */}
             <Redirect to={Routes.LOGIN} />
           </Route>
 
-          <Route exact path={Routes.LOGIN} component={Login} />
+          <Route path={Routes.LOGIN} >
+            <Login />
+          </Route>
 
-          <Route exact path={Routes.SIGNUP} component={SignUp} />
+          <Route path={Routes.SIGNUP}>
+            <SignUp />
+          </Route>
 
-          <Route exact path={Routes.PASSWORD_RECOVERY} component={PasswordRecovery} />
+          <Route path={Routes.PASSWORD_RECOVERY}>
+            <PasswordRecovery />
+          </Route>
 
-          <Route exact path={Routes.HOME} component={Home} />
+          <Route path={Routes.HOME}>
+            <Home />
+          </Route>
 
         </Switch>
       </Router>
