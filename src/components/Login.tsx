@@ -1,17 +1,18 @@
 import { Avatar, Button, Grid, Link, Paper, TextField, Typography } from "@material-ui/core"
 import { LockOutlined } from "@material-ui/icons"
 import { useHistory } from "react-router-dom";
+import { Routes } from "../utils/Routes";
 
 const Login = () => {
 
     const history = useHistory();
 
     const handleSignIn = () => {
-        history.push("/home");
+        history.push(Routes.HOME);
     }
 
     const handleCreateAccount = () => {
-        history.push("/signup")
+        history.push(Routes.SIGNUP)
     }
 
     return (

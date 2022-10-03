@@ -1,13 +1,42 @@
 import { Avatar, Button, Grid, Link, Paper, TextField, Typography } from "@material-ui/core"
 import { LockOutlined } from "@material-ui/icons";
+import { response } from "express";
+import { useState } from "react";
 import { useHistory } from "react-router-dom";
+import { User } from "../models/User";
+import UserService from "../services/UserService";
+import { Routes } from "../utils/Routes";
+
+const initialUser: User = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: ""
+}
 
 const SignUp = () => {
 
     const history = useHistory();
 
+    const [user, setUser] = useState<User>(initialUser);
+    const [password, setPassword] = useState<string>("");
+    const [repPassword, setRepPassword] = useState<string>("");
+
     const handleLogin = () => {
-        history.push("/login")
+        history.push(Routes.LOGIN)
+    }
+
+    const onSubmit = () => {
+        if (password === repPassword) {
+            let finalUser = user;
+            finalUser.password = password;
+            UserService.createUser(user).then((response: any) => {
+                console.log("CREADO CORRECTAMENTE");
+                history.push(Routes.HOME);
+            }).catch((error: any) => {
+                console.log(error);
+            })
+        }
     }
 
     return (
@@ -26,6 +55,8 @@ const SignUp = () => {
                     fullWidth
                     required
                     style={{ paddingBottom: "0.5em" }}
+                    value={user.firstName}
+                    onChange={(e) => setUser({ ...user, firstName: e.target.value })}
                 />
                 <TextField
                     label="Apellido"
@@ -34,6 +65,8 @@ const SignUp = () => {
                     fullWidth
                     required
                     style={{ paddingBottom: "0.5em" }}
+                    value={user.lastName}
+                    onChange={(e) => setUser({ ...user, lastName: e.target.value })}
                 />
 
                 <TextField
@@ -43,6 +76,8 @@ const SignUp = () => {
                     fullWidth
                     required
                     style={{ paddingBottom: "0.5em" }}
+                    value={user.email}
+                    onChange={(e) => setUser({ ...user, email: e.target.value })}
                 />
 
                 <TextField
@@ -53,6 +88,8 @@ const SignUp = () => {
                     fullWidth
                     required
                     style={{ paddingBottom: "0.5em" }}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                 />
 
                 <TextField
@@ -62,6 +99,8 @@ const SignUp = () => {
                     type="password"
                     fullWidth
                     required
+                    value={repPassword}
+                    onChange={(e) => setRepPassword(e.target.value)}
                 />
 
                 <Button
