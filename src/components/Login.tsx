@@ -1,11 +1,32 @@
 import { Avatar, Button, Grid, Link, Paper, TextField, Typography } from "@material-ui/core"
 import { LockOutlined } from "@material-ui/icons"
+import { useState } from "react";
 import { useHistory } from "react-router-dom";
+import { UserLogin } from "../models/User";
+import UserService from "../services/UserService";
 import { Routes } from "../utils/Routes";
+
+const regexp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+
+interface ValidState {
+    valid: boolean;
+    msg: string;
+}
+
+const initialState: ValidState = {
+    valid: false,
+    msg: ""
+}
 
 const Login = () => {
 
     const history = useHistory();
+
+    const [email, setEmail] = useState<string>("");
+    const [password, setPassword] = useState<string>("");
+
+    const [validEmail, setValidEmail] = useState<ValidState>(initialState);
+    const [validPassword, setValidPassword] = useState<ValidState>(initialState);
 
     const handleSignIn = () => {
         history.push(Routes.HOME);
@@ -13,6 +34,37 @@ const Login = () => {
 
     const handleCreateAccount = () => {
         history.push(Routes.SIGNUP)
+    }
+
+    const validateEmail = () => {
+        if (email.match(regexp)) {
+            setValidEmail({ valid: true, msg: "" });
+        } else {
+            setValidEmail({ valid: false, msg: "E-mail invalido" })
+        }
+    }
+
+    const validatePassword = () => {
+        if (password.length > 6) {
+            setValidPassword({ valid: true, msg: "" });
+        } else {
+            setValidPassword({ valid: false, msg: "Contraseña invalida" })
+        }
+    }
+
+    const validateFields = () => {
+        validateEmail();
+        validatePassword();
+        return validEmail.valid && validPassword.valid;
+    }
+
+    const handleLogin = () => {
+        if (validateFields()) {
+            let data: UserLogin = { email: email, password: password }
+            UserService.login(data).then((response: any) => {
+                history.push({ pathname: Routes.HOME, state: { user: response.getContent() } })
+            })
+        }
     }
 
     return (
@@ -31,6 +83,8 @@ const Login = () => {
                     fullWidth
                     required
                     style={{ paddingBottom: "0.5em" }}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                 />
 
                 <TextField
@@ -40,6 +94,8 @@ const Login = () => {
                     type="password"
                     fullWidth
                     required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                 />
 
                 <Button

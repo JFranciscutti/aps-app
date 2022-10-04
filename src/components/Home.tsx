@@ -1,10 +1,14 @@
 import { Box, Button, Grid, Paper, Typography } from "@material-ui/core"
-import { useHistory } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import { User } from "../models/User";
 import { Routes } from "../utils/Routes";
 
 const Home = () => {
 
     const history = useHistory();
+
+    const [loggedUser, setLoggedUser] = useState<User>();
 
     const handleSignOut = () => {
         history.push(Routes.LOGIN);

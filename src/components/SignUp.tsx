@@ -1,6 +1,5 @@
 import { Avatar, Button, Grid, Link, Paper, TextField, Typography } from "@material-ui/core"
 import { LockOutlined } from "@material-ui/icons";
-import { response } from "express";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { User } from "../models/User";
@@ -31,8 +30,8 @@ const SignUp = () => {
             let finalUser = user;
             finalUser.password = password;
             UserService.createUser(user).then((response: any) => {
-                console.log("CREADO CORRECTAMENTE");
-                history.push(Routes.HOME);
+                alert("Usuario creado correctamente");
+                history.push(Routes.LOGIN);
             }).catch((error: any) => {
                 console.log(error);
             })
@@ -109,6 +108,7 @@ const SignUp = () => {
                     variant="contained"
                     style={{ margin: "8px 0" }}
                     fullWidth
+                    onClick={onSubmit}
                 >
                     Crear cuenta
                 </Button>
