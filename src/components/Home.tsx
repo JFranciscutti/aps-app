@@ -10,6 +10,13 @@ const Home = () => {
 
     const [loggedUser, setLoggedUser] = useState<User>();
 
+    useEffect(() => {
+        if (!!history.location.state) {
+            //@ts-ignore
+            setLoggedUser(history?.location?.state?.user);
+        }
+    }, [])
+
     const handleSignOut = () => {
         history.push(Routes.LOGIN);
     }
@@ -20,6 +27,11 @@ const Home = () => {
                     <Box style={{ display: "flex" }}>
                         <Typography variant="h4" style={{ fontFamily: "cursive", fontWeight: "bold" }}>SIU GUARANI</Typography>
                         <Typography variant="h6" style={{ fontFamily: "cursive", paddingTop: "0.7em" }}>v2</Typography>
+                    </Box>
+                    <Box>
+                        <Typography>
+                            {`Logueado como ${loggedUser?.firstName} ${loggedUser?.lastName}`}
+                        </Typography>
                     </Box>
                     <Box style={{ display: "flex" }}>
                         <Button

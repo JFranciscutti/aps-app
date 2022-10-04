@@ -28,10 +28,6 @@ const Login = () => {
     const [validEmail, setValidEmail] = useState<ValidState>(initialState);
     const [validPassword, setValidPassword] = useState<ValidState>(initialState);
 
-    const handleSignIn = () => {
-        history.push(Routes.HOME);
-    }
-
     const handleCreateAccount = () => {
         history.push(Routes.SIGNUP)
     }
@@ -45,7 +41,7 @@ const Login = () => {
     }
 
     const validatePassword = () => {
-        if (password.length > 6) {
+        if (password.length >= 6) {
             setValidPassword({ valid: true, msg: "" });
         } else {
             setValidPassword({ valid: false, msg: "Contraseña invalida" })
@@ -62,19 +58,19 @@ const Login = () => {
         if (validateFields()) {
             let data: UserLogin = { email: email, password: password }
             UserService.login(data).then((response: any) => {
-                history.push({ pathname: Routes.HOME, state: { user: response.getContent() } })
+                history.push({ pathname: Routes.HOME, state: { user: response.data } })
             })
         }
     }
 
     return (
         <Grid style={{ textAlign: "center", backgroundColor: "#D5D6D8", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontSize: "calc(10px + 2vmin)" }}>
-            <Paper elevation={10} style={{ padding: 20, height: window.innerHeight * 0.7, width: "30%", margin: "20px auto" }}>
+            <Paper elevation={10} style={{ padding: "1em", height: window.innerHeight * 0.7, width: "30%", margin: "2% auto" }}>
                 <Grid style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", paddingBottom: "1em" }}>
                     <Avatar style={{ backgroundColor: "#1BBD7E" }}>
                         <LockOutlined />
                     </Avatar>
-                    <Typography variant="h5">¡Bienvenido!</Typography>
+                    <Typography variant="h5">¡Bienvenido a SIU Guarani v2!</Typography>
                 </Grid>
                 <TextField
                     label="E-mail"
@@ -104,7 +100,7 @@ const Login = () => {
                     variant="contained"
                     style={{ margin: "8px 0" }}
                     fullWidth
-                    onClick={handleSignIn}
+                    onClick={handleLogin}
                 >
                     Iniciar sesion
                 </Button>

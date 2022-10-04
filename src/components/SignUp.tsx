@@ -31,7 +31,7 @@ const SignUp = () => {
             finalUser.password = password;
             UserService.createUser(user).then((response: any) => {
                 alert("Usuario creado correctamente");
-                history.push(Routes.LOGIN);
+                history.push({ pathname: Routes.HOME, state: { user: response.data } })
             }).catch((error: any) => {
                 console.log(error);
             })
