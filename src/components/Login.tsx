@@ -1,6 +1,6 @@
 import { Avatar, Button, Grid, Link, Paper, TextField, Typography } from "@material-ui/core"
 import { LockOutlined } from "@material-ui/icons"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { UserLogin } from "../models/User";
 import UserService from "../services/UserService";
@@ -28,6 +28,11 @@ const Login = () => {
     const [validEmail, setValidEmail] = useState<ValidState>(initialState);
     const [validPassword, setValidPassword] = useState<ValidState>(initialState);
 
+    useEffect(() => {
+        setValidEmail({ valid: true, msg: "" });
+        setValidPassword({ valid: true, msg: "" });
+    }, [])
+
     const handleCreateAccount = () => {
         history.push(Routes.SIGNUP)
     }
@@ -51,14 +56,18 @@ const Login = () => {
     const validateFields = () => {
         validateEmail();
         validatePassword();
-        return validEmail.valid && validPassword.valid;
     }
 
     const handleLogin = () => {
-        if (validateFields()) {
+        validateFields();
+
+        if (validEmail.valid && validPassword.valid) {
             let data: UserLogin = { email: email, password: password }
             UserService.login(data).then((response: any) => {
                 history.push({ pathname: Routes.HOME, state: { user: response.data } })
+            }).catch((error: any) => {
+                console.log(error);
+                alert("Error al iniciar sesión")
             })
         }
     }
@@ -81,6 +90,8 @@ const Login = () => {
                     style={{ paddingBottom: "0.5em" }}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    error={!validEmail.valid}
+                    helperText={validEmail.msg}
                 />
 
                 <TextField
@@ -92,6 +103,8 @@ const Login = () => {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    error={!validPassword}
+                    helperText={validPassword.msg}
                 />
 
                 <Button
