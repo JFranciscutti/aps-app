@@ -2,6 +2,24 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+# IMPORTANT NOTE
+The backend of this project was made with Java 11, SpringBoot and MySQL for the database. As it is a local project, you are able to see just the login screen (because of the backend calls that won't work in your computer).
+
+# Unless you do the following ;-)
+ - Clone this repo
+ - Make sure that you have a MySQL client running in your PC
+ - Create a database called 'aps_project'.
+ - OPTIONAL: create a database, no matter the name. Then, go to application.properties file in the backend folder and reaplace 'aps_project' with your database name in the selected line of this image.
+![image](https://user-images.githubusercontent.com/54332299/194198447-8e7d3d58-60a6-4d27-ba5d-5e1edcc0f248.png)
+- After that, you should be able to run the backend app.
+
+# Lifting up the frontend!
+- Move to the root of this project and run 'npm install' to install all dependencies.
+- Then, run 'npm start'.
+
+Congratulations, if you followed the steps correctly, you are able to:
+### DESTROY THE WHOLE APP
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -13,11 +31,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
 ### `npm run build`
 
