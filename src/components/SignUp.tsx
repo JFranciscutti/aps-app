@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, FormControl, FormControlLabel, FormLabel, Grid, Link, Paper, Radio, RadioGroup, TextField, Typography } from "@material-ui/core"
+import { Avatar, Box, Button, createStyles, FormControl, FormControlLabel, FormLabel, Grid, Link, makeStyles, Paper, Radio, RadioGroup, TextField, Typography } from "@material-ui/core"
 import { LockOutlined } from "@material-ui/icons";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -6,6 +6,7 @@ import { User } from "../models/User";
 import UserService from "../services/UserService";
 import { Roles } from "../utils/Roles";
 import { Routes } from "../utils/Routes";
+import LoginTitle from "./LoginTitle";
 
 const initialUser: User = {
     firstName: "",
@@ -18,6 +19,7 @@ const initialUser: User = {
 const SignUp = () => {
 
     const history = useHistory();
+    const classes = useStyles();
 
     const [user, setUser] = useState<User>(initialUser);
     const [password, setPassword] = useState<string>("");
@@ -31,7 +33,7 @@ const SignUp = () => {
         if (password === repPassword) {
             let finalUser = user;
             finalUser.password = password;
-            UserService.createUser(user).then((response: any) => {
+            UserService.createUser(finalUser).then((response: any) => {
                 alert("Usuario creado correctamente");
                 history.push({ pathname: Routes.HOME, state: { user: response.data } })
             }).catch((error: any) => {
@@ -41,14 +43,9 @@ const SignUp = () => {
     }
 
     return (
-        <Grid style={{ textAlign: "center", backgroundColor: "#D5D6D8", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontSize: "calc(10px + 2vmin)" }}>
-            <Paper elevation={10} style={{ padding: 20, height: window.innerHeight * 0.8, width: "30%", margin: "20px auto" }}>
-                <Grid style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", paddingBottom: "1em" }}>
-                    <Avatar style={{ backgroundColor: "#1BBD7E" }}>
-                        <LockOutlined />
-                    </Avatar>
-                    <Typography variant="h5">¡Bienvenido a SIU Guarani v2!</Typography>
-                </Grid>
+        <Grid className={classes.mainContainer}>
+            <Paper elevation={10} className={classes.paperContainer}>
+                <LoginTitle />
                 <TextField
                     label="Nombre"
                     placeholder="Ingresá tu nombre"
@@ -104,7 +101,7 @@ const SignUp = () => {
                     onChange={(e) => setRepPassword(e.target.value)}
                 />
 
-                <FormControl style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", padding: "0.5em 0" }}>
+                <FormControl className={classes.radioGroupContainer}>
                     <FormLabel>Soy: </FormLabel>
                     <RadioGroup
                         onChange={(e) => setUser({ ...user, role: e.target.value as Roles })}
@@ -120,7 +117,7 @@ const SignUp = () => {
 
                 {
                     user.role === Roles.PROFESOR && (
-                        <Box style={{ display: "flex", flexDirection: "column" }}>
+                        <Box className={classes.column}>
                             <Typography variant="subtitle1">Ingrese codigo de seguridad brindado por su institución</Typography>
                             <TextField
                                 variant="outlined"
@@ -157,3 +154,33 @@ const SignUp = () => {
 }
 
 export default SignUp;
+
+const useStyles = makeStyles((theme: any) => createStyles({
+    mainContainer: {
+        textAlign: "center",
+        backgroundColor: "#D5D6D8",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: "calc(10px + 2vmin)"
+    },
+    paperContainer: {
+        padding: 20,
+        height: window.innerHeight * 0.8,
+        width: "30%",
+        margin: "20px auto"
+    },
+    radioGroupContainer: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "0.5em 0"
+    },
+    column: {
+        display: "flex",
+        flexDirection: "column"
+    }
+}));

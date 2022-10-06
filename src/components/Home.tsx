@@ -1,6 +1,7 @@
-import { Avatar, Box, Button, FormControl, Grid, InputAdornment, MenuItem, Paper, Select, Typography, makeStyles } from "@material-ui/core"
+import { Avatar, Box, Button, FormControl, Grid, InputAdornment, MenuItem, Paper, Select, Typography, makeStyles, createStyles } from "@material-ui/core"
+import { CircleRounded } from "@mui/icons-material";
 import { CSSProperties, useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { User } from "../models/User";
 import { Routes } from "../utils/Routes";
 import MainComponent from "./MainComponent";
@@ -27,18 +28,19 @@ const Home = () => {
     }
     return (
         <Grid >
-            <Paper style={{ width: "100%", height: 80, backgroundColor: "white" }}>
-                <Grid style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", height: "100%", alignItems: "center", padding: "0 2em" }}>
+            <Paper className={classes.paperContainer}>
+                <Grid className={classes.topBarContainer}>
                     <Box style={{ display: "flex" }}>
                         <Typography variant="h4" style={{ fontFamily: "cursive", fontWeight: "bold" }}>SIU GUARANI</Typography>
                         <Typography variant="h6" style={{ fontFamily: "cursive", paddingTop: "0.7em" }}>v2</Typography>
                     </Box>
-                    <Box>
-                        <Typography>
-                            {`Logueado como ${loggedUser?.firstName} ${loggedUser?.lastName}`}
-                        </Typography>
-                    </Box>
-                    <Box>
+                    <Box style={{ display: "flex" }}>
+                        <Box className={classes.userNameBox}>
+                            <Typography>
+                                {`${loggedUser?.role} ${loggedUser?.firstName} ${loggedUser?.lastName}`}
+                            </Typography>
+                            <CircleRounded style={{ color: "#38ff00", height: "0.5em" }} />
+                        </Box>
                         <FormControl>
                             <Select
                                 endAdornment={
@@ -67,7 +69,7 @@ const Home = () => {
 
 export default Home;
 
-const useStyles = makeStyles((theme: any) => ({
+const useStyles = makeStyles((theme: any) => createStyles({
     selectRoot: {
         color: "blue",
         font: "normal normal normal 0.875em/1.5em Roboto",
@@ -95,4 +97,22 @@ const useStyles = makeStyles((theme: any) => ({
         marginRight: "-6px",
         zIndex: 3
     },
+    paperContainer: {
+        width: "100%",
+        height: 80,
+        backgroundColor: "white"
+    },
+    topBarContainer: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        height: "100%",
+        alignItems: "center",
+        padding: "0 2em"
+    },
+    userNameBox: {
+        display: "flex",
+        marginRight: "2em",
+        alignItems: "center"
+    }
 }));

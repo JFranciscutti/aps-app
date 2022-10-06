@@ -35,19 +35,14 @@ public class UsuarioService {
   public Usuario getUserByEmailAndPassword(String email, String password) throws WrongPasswordException, UserNotFoundException {
     Optional<Usuario> usuario = repository.getByEmail(email);
     if (usuario.isPresent()) {
-      boolean samePassword = validatePassword(usuario.get(), password);
-      if (samePassword) {
+      if (Objects.equals(usuario.get().getPassword(), password)) {
         return usuario.get();
-      }else {
+      } else {
         throw new WrongPasswordException("Contraseña invalida", "error");
       }
     } else {
       throw new UserNotFoundException("Usuario no encontrado", "error");
     }
-  }
-
-  private boolean validatePassword(Usuario usuario, String password) {
-    return Objects.equals(usuario.getPassword(), password);
   }
 
 

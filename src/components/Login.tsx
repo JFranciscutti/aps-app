@@ -1,12 +1,12 @@
-import { Avatar, Button, Grid, Link, Paper, TextField, Typography } from "@material-ui/core"
-import { LockOutlined } from "@material-ui/icons"
+import { Button, createStyles, Grid, Link, makeStyles, Paper, TextField, Typography } from "@material-ui/core"
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { UserLogin } from "../models/User";
 import UserService from "../services/UserService";
 import { Routes } from "../utils/Routes";
+import LoginTitle from "./LoginTitle";
 
-const regexp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+const emailRegExp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
 
 interface ValidState {
     valid: boolean;
@@ -21,6 +21,7 @@ const initialState: ValidState = {
 const Login = () => {
 
     const history = useHistory();
+    const classes = useStyles();
 
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
@@ -38,7 +39,7 @@ const Login = () => {
     }
 
     const validateEmail = () => {
-        if (email.match(regexp)) {
+        if (email.match(emailRegExp)) {
             setValidEmail({ valid: true, msg: "" });
         } else {
             setValidEmail({ valid: false, msg: "E-mail invalido" })
@@ -73,14 +74,9 @@ const Login = () => {
     }
 
     return (
-        <Grid style={{ textAlign: "center", backgroundColor: "#D5D6D8", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontSize: "calc(10px + 2vmin)" }}>
-            <Paper elevation={10} style={{ padding: "1em", height: window.innerHeight * 0.7, width: "30%", margin: "2% auto" }}>
-                <Grid style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", paddingBottom: "1em" }}>
-                    <Avatar style={{ backgroundColor: "#1BBD7E" }}>
-                        <LockOutlined />
-                    </Avatar>
-                    <Typography variant="h5">¡Bienvenido a SIU Guarani v2!</Typography>
-                </Grid>
+        <Grid className={classes.mainContainer}>
+            <Paper elevation={10} className={classes.paperContainer}>
+                <LoginTitle />
                 <TextField
                     label="E-mail"
                     placeholder="Ingresá tu e-mail"
@@ -134,3 +130,22 @@ const Login = () => {
 }
 
 export default Login
+
+const useStyles = makeStyles((theme: any) => createStyles({
+    mainContainer: {
+        textAlign: "center",
+        backgroundColor: "#D5D6D8",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: "calc(10px + 2vmin)"
+    },
+    paperContainer: {
+        padding: "1em",
+        height: window.innerHeight * 0.7,
+        width: "30%",
+        margin: "2% auto"
+    }
+}));
