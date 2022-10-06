@@ -62,7 +62,7 @@ const Home = () => {
                     </Box>
                 </Grid>
             </Paper>
-            <MainComponent />
+            <MainComponent user={loggedUser} />
         </Grid>
     )
 }
