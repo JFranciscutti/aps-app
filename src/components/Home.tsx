@@ -3,6 +3,7 @@ import { CSSProperties, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { User } from "../models/User";
 import { Routes } from "../utils/Routes";
+import MainComponent from "./MainComponent";
 
 const Home = () => {
 
@@ -26,7 +27,7 @@ const Home = () => {
     }
     return (
         <Grid >
-            <Paper style={{ width: "100%", height: "4em", backgroundColor: "white" }}>
+            <Paper style={{ width: "100%", height: 80, backgroundColor: "white" }}>
                 <Grid style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", height: "100%", alignItems: "center", padding: "0 2em" }}>
                     <Box style={{ display: "flex" }}>
                         <Typography variant="h4" style={{ fontFamily: "cursive", fontWeight: "bold" }}>SIU GUARANI</Typography>
@@ -59,9 +60,7 @@ const Home = () => {
                     </Box>
                 </Grid>
             </Paper>
-            <Grid style={{ display: "flex", height: "100%", backgroundColor: "white" }}>
-                <Typography>Proximamente</Typography>
-            </Grid>
+            <MainComponent />
         </Grid>
     )
 }
@@ -69,34 +68,6 @@ const Home = () => {
 export default Home;
 
 const useStyles = makeStyles((theme: any) => ({
-    menu: {
-        display: "flex",
-        alignItems: "center"
-    },
-    menuDropdown: {
-        textAlign: "right",
-        font: "normal normal normal 0.875em/1.5em Roboto",
-        letterSpacing: "0px",
-        color: "white",
-        opacity: 1,
-        backgroundColor: "transparent",
-        borderRadius: "5px",
-        "&:hover": {
-            borderRadius: "5px",
-        },
-        "&:focus-within": {
-            borderRadius: "5px",
-        },
-        "& .MuiOutlinedInput-notchedOutline": {
-            border: "none"
-        },
-        "&:hover .MuiOutlinedInput-notchedOutline": {
-            border: "none"
-        },
-        "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-            borderRadius: "none"
-        },
-    },
     selectRoot: {
         color: "blue",
         font: "normal normal normal 0.875em/1.5em Roboto",
