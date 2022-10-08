@@ -26,4 +26,9 @@ public class UsuarioController {
   public ResponseEntity<Usuario> loginUser(@PathVariable("email") String email, @RequestBody String password) throws UserNotFoundException, WrongPasswordException {
     return ResponseEntity.ok(service.getUserByEmailAndPassword(email, password));
   }
+
+  @PutMapping("/update")
+  public ResponseEntity<Usuario> updateUser(@RequestBody UsuarioNuevoDTO dto) throws UserNotFoundException {
+    return ResponseEntity.ok(service.updateUser(dto));
+  }
 }

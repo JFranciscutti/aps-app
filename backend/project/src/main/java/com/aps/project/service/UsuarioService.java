@@ -5,6 +5,7 @@ import com.aps.project.exceptions.*;
 import com.aps.project.model.UserRole;
 import com.aps.project.model.Usuario;
 import com.aps.project.repo.UsuarioRepository;
+import io.netty.handler.codec.http2.Http2Error;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +43,19 @@ public class UsuarioService {
       }
     } else {
       throw new UserNotFoundException("Usuario no encontrado", "error");
+    }
+  }
+
+  public Usuario updateUser(UsuarioNuevoDTO userToUpdate) throws UserNotFoundException {
+    Optional<Usuario> usuario = repository.getByEmail(userToUpdate.getEmail());
+    if (usuario.isPresent()) {
+      Usuario existingUser = usuario.get();
+      existingUser.setPassword(userToUpdate.getPassword());
+      existingUser.setFirstName(userToUpdate.getFirstName());
+      existingUser.setLastName(userToUpdate.getLastName());
+      return repository.save(existingUser);
+    } else {
+      throw new UserNotFoundException("Usuario no encontrado", "ERROR");
     }
   }
 
