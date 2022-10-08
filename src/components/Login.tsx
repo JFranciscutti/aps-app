@@ -66,6 +66,8 @@ const Login = () => {
             let data: UserLogin = { email: email, password: password }
             UserService.login(data).then((response: any) => {
                 history.push({ pathname: Routes.HOME, state: { user: response.data } })
+                localStorage.setItem('email', response.data.email);
+                localStorage.setItem('password', response.data.password)
             }).catch((error: any) => {
                 console.log(error);
                 alert("Error al iniciar sesión")

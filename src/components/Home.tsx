@@ -1,14 +1,14 @@
-import { Avatar, Box, Button, FormControl, Grid, InputAdornment, MenuItem, Paper, Select, Typography, makeStyles, createStyles } from "@material-ui/core"
-import { CircleRounded } from "@mui/icons-material";
-import { CSSProperties, useEffect, useState } from "react";
+import { Box, Grid, Paper, Typography, makeStyles, createStyles, IconButton } from "@material-ui/core"
+import { CircleRounded, LogoutOutlined } from "@mui/icons-material";
+import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { User } from "../models/User";
+import UserService from "../services/UserService";
 import { Routes } from "../utils/Routes";
 import MainComponent from "./MainComponent";
 
 const Home = () => {
 
-    const avatarStyles: CSSProperties = { fontWeight: "bold", backgroundColor: "#1976d2", height: "3em", width: "3em" };
 
     const history = useHistory();
 
@@ -17,15 +17,21 @@ const Home = () => {
     const [loggedUser, setLoggedUser] = useState<User>();
 
     useEffect(() => {
-        if (!!history.location.state) {
-            //@ts-ignore
-            setLoggedUser(history?.location?.state?.user);
+        const email = localStorage.getItem("email");
+        const password = localStorage.getItem("password");
+        if (!!email && !!password) {
+            UserService.getByEmailAndPassword(email, password).then((response: any) => {
+                setLoggedUser(response.data);
+            });
+
         }
-    }, [])
+    }, []);
 
     const handleSignOut = () => {
+        localStorage.clear();
         history.push(Routes.LOGIN);
     }
+
     return (
         <Grid >
             <Paper className={classes.paperContainer}>
@@ -41,25 +47,11 @@ const Home = () => {
                             </Typography>
                             <CircleRounded style={{ color: "#38ff00", height: "0.5em" }} />
                         </Box>
-                        <FormControl>
-                            <Select
-                                endAdornment={
-                                    <InputAdornment position="start" className={classes.selectAdornment} disablePointerEvents={true}>
-                                        <Avatar alt="Avatar" style={avatarStyles} />
-                                    </InputAdornment>
-                                }
-                                MenuProps={{ classes: { paper: classes.selectPaper } }}
-                                classes={{
-                                    root: classes.selectRoot,
-                                    icon: classes.icon,
-                                }}
-                            >
-                                <MenuItem onClick={() => alert("eppaaa todavia no")}>{loggedUser?.firstName + " " + loggedUser?.lastName}</MenuItem>
-                                <MenuItem onClick={() => alert("coming soon mi pana")}>Editar perfil</MenuItem>
-                                <MenuItem onClick={handleSignOut}>Cerrar sesion</MenuItem>
-                            </Select>
-                        </FormControl>
+                        <IconButton onClick={handleSignOut}>
+                            <LogoutOutlined />
+                        </IconButton>
                     </Box>
+
                 </Grid>
             </Paper>
             <MainComponent user={loggedUser} />
