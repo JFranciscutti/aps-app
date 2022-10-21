@@ -10,6 +10,7 @@
     "@material-ui/icons": "^4.11.3",
     "@mui/icons-material": "^5.10.6",
     "@mui/material": "^5.10.8",
+    "@mui/x-data-grid": "^5.17.8",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -22,6 +23,7 @@
     "@types/react-dom": "^18.0.6",
     "axios": "^0.27.2",
     "express": "^4.18.1",
+    "json-server": "^0.17.0",
     "mongodb": "^4.10.0",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.20",
@@ -34,7 +36,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "set PORT=3030 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

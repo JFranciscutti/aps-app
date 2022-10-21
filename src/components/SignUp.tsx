@@ -35,6 +35,8 @@ const SignUp = () => {
             finalUser.password = password;
             UserService.createUser(finalUser).then((response: any) => {
                 alert("Usuario creado correctamente");
+                localStorage.setItem('email', response.data.email);
+                localStorage.setItem('password', response.data.password)
                 history.push({ pathname: Routes.HOME, state: { user: response.data } })
             }).catch((error: any) => {
                 console.log(error);

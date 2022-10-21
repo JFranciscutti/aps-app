@@ -1,124 +1,95 @@
-import { Box, Button, Grid, IconButton, Paper, TextField, Typography } from "@material-ui/core";
-import { useEffect, useRef, useState } from "react";
+import { Button, Grid, Typography } from "@material-ui/core";
+import { useEffect, useState } from "react";
 import { User } from "../models/User";
-import { Edit } from "@mui/icons-material";
 import UserService from "../services/UserService";
 import { useHistory } from "react-router-dom";
-import { Routes } from "../utils/Routes";
+import EditDataComponent from "./EditDataComponent";
+import { Roles } from "../utils/Roles";
+import NotasComponent from "./alumno/NotasComponent";
+import MateriasComponent from "./admin/MateriasComponent";
 
 interface Props {
     user?: User;
 }
 
+const ALUMNO_OPTIONS = [
+    "Mis datos",
+    "Mis notas",
+    "Inscripción a cursadas",
+    "Inscripción a examenes"
+];
+
+const PROFESOR_OPTIONS = [
+    "Mis datos",
+    "Examenes",
+];
+
+const ADMIN_OPTIONS = [
+    "Mis datos",
+    "Materias",
+    "Alumnos",
+    "Profesores",
+];
+
 const MainComponent = ({ user }: Props) => {
 
     const history = useHistory();
 
-    const [enableEdit, setEnableEdit] = useState<boolean>(false);
-    const [userToUpdate, setUserToUpdate] = useState<User | undefined>(user);
-    const [password, setPassword] = useState<string>("");
-    const [repPassword, setRepPassword] = useState<string>("");
+    const [currentUser, setCurrentUser] = useState<User | undefined>(user);
+
+    const [options, setOptions] = useState<string[]>(ALUMNO_OPTIONS);
+
+    const [selectedOption, setSelectedOption] = useState<string>(options[0]);
 
     useEffect(() => {
         const email = localStorage.getItem("email");
         const password = localStorage.getItem("password");
         if (!!email && !!password) {
             UserService.getByEmailAndPassword(email, password).then((response: any) => {
-                setUserToUpdate(response.data);
-            });
+                setCurrentUser(response.data);
+                roleSwitch(response.data.role)
+
+            })
         }
     }, []);
 
+    const actionButton = (label: string) => {
+        return (
+            <Button
+                onClick={() => setSelectedOption(label)}
+                variant="contained"
+                style={{ display: "flex", justifyContent: "center", padding: "1em 0" }}
+            >
+                <Typography variant="button">{label}</Typography>
+            </Button>
+        )
+    }
 
-    const handleUpdateData = () => {
-        if (password === repPassword) {
-            let finalUser: User = userToUpdate!;
-            finalUser.password = password === "" ? userToUpdate?.password! : password;
-            UserService.update(finalUser!).then((response: any) => {
-                history.push({ pathname: Routes.HOME, state: { user: response.data } })
-                setEnableEdit(false);
-            }).catch((error: any) => {
-                console.log(error);
-            })
+    const LateralBar = () => (
+        <Grid item style={{ display: "flex", flexDirection: "column", width: "15%", borderRight: "1px solid gray" }}>
+            {options.map((option) => { return actionButton(option) })}
+        </Grid>
+    )
+
+    const roleSwitch = (role: Roles) => {
+        switch (role) {
+            case Roles.ALUMNO: setOptions(ALUMNO_OPTIONS); break;
+            case Roles.PROFESOR: setOptions(PROFESOR_OPTIONS); break;
+            case Roles.ADMIN: setOptions(ADMIN_OPTIONS); break;
+            default: break;
         }
     }
 
     return (
-        <Grid container style={{ display: "flex", alignContent: "center", justifyContent: "center" }}>
-            <Grid item style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems: "center", height: "100%" }}>
-                <Paper elevation={2} style={{ width: "100%", padding: "1em", marginTop: "1em" }}>
-                    <Box style={{ display: "flex", justifyContent: "space-between" }}>
-                        <Typography variant="h4">Mis datos</Typography>
-                        <IconButton onClick={() => setEnableEdit(true)}>
-                            <Edit />
-                        </IconButton>
-                    </Box>
-                    <Box style={{ paddingTop: "1em" }}>
-                        <TextField
-                            variant="standard"
-                            fullWidth
-                            aria-readonly={!enableEdit}
-                            required
-                            style={{ paddingBottom: "0.5em" }}
-                            value={userToUpdate?.firstName}
-                            disabled={!enableEdit}
-                            onChange={(e) => setUserToUpdate({ ...userToUpdate!, firstName: e.target.value })}
-                        />
-                        <TextField
-                            variant="standard"
-                            fullWidth
-                            required
-                            style={{ paddingBottom: "0.5em" }}
-                            disabled={!enableEdit}
-                            value={userToUpdate?.lastName}
-                            defaultValue={user?.lastName}
-                            onChange={(e) => setUserToUpdate({ ...userToUpdate!, lastName: e.target.value })}
-                        />
-
-                        <TextField
-                            variant="standard"
-                            fullWidth
-                            required
-                            style={{ paddingBottom: "0.5em" }}
-                            disabled
-                            value={userToUpdate?.email}
-                        />
-                        {enableEdit && <>
-                            <TextField
-                                label="Contraseña"
-                                placeholder="Ingresá tu contraseña"
-                                variant="standard"
-                                type="password"
-                                fullWidth
-                                required
-                                style={{ paddingBottom: "0.5em" }}
-                                disabled={!enableEdit}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-
-                            <TextField
-                                label="Repite contraseña"
-                                placeholder="Repite la contraseña"
-                                variant="standard"
-                                type="password"
-                                fullWidth
-                                required
-                                disabled={!enableEdit}
-                                value={repPassword}
-                                onChange={(e) => setRepPassword(e.target.value)}
-                            />
-                        </>}
-                    </Box>
-                    {enableEdit && <Box style={{ display: "flex", justifyContent: "flex-end", marginTop: "1em" }}>
-                        <Button variant="contained" color="inherit" onClick={() => setEnableEdit(false)} style={{ marginRight: "1em" }}>
-                            Cancelar
-                        </Button>
-                        <Button variant="contained" color="primary" onClick={handleUpdateData}>
-                            Guardar cambios
-                        </Button>
-                    </Box>}
-                </Paper>
+        <Grid container>
+            <LateralBar />
+            <Grid item style={{ display: "flex", flexDirection: "column", width: "85%" }}>
+                {selectedOption === "Mis datos" && <EditDataComponent user={user} />}
+                {selectedOption === "Mis notas" && user?.role === Roles.ALUMNO && (<NotasComponent />)}
+                {selectedOption === "Examenes" && user?.role === Roles.PROFESOR && (<NotasComponent />)}
+                {selectedOption === "Materias" && user?.role === Roles.ADMIN && (<MateriasComponent />)}
+                {selectedOption === "Alumnos" && user?.role === Roles.ADMIN && (<NotasComponent />)}
+                {selectedOption === "Profesores" && user?.role === Roles.ADMIN && (<NotasComponent />)}
             </Grid>
         </Grid>
     )

@@ -36,9 +36,14 @@ const Home = () => {
         <Grid >
             <Paper className={classes.paperContainer}>
                 <Grid className={classes.topBarContainer}>
-                    <Box style={{ display: "flex" }}>
-                        <Typography variant="h4" style={{ fontFamily: "cursive", fontWeight: "bold" }}>SIU GUARANI</Typography>
-                        <Typography variant="h6" style={{ fontFamily: "cursive", paddingTop: "0.7em" }}>v2</Typography>
+                    <Box style={{ display: "flex", flexDirection: "column" }}>
+                        <Box style={{ display: "flex" }}>
+                            <Typography variant="h4" style={{ fontFamily: "cursive", fontWeight: "bold" }}>SIU GUARANI</Typography>
+                            <Typography variant="h6" style={{ fontFamily: "cursive", paddingTop: "0.7em" }}>v2</Typography>
+                        </Box>
+                        <Box>
+                            <Typography style={{ fontFamily: "cursive", fontSize: "0.6em" }}>Solo para Lic. en Cs. de la Computación</Typography>
+                        </Box>
                     </Box>
                     <Box style={{ display: "flex" }}>
                         <Box className={classes.userNameBox}>
