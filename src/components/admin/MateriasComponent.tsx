@@ -1,23 +1,35 @@
-import { Grid, Paper, Box, Typography, IconButton, Modal } from "@material-ui/core";
-import { useEffect, useState } from "react";
+import { Grid, Paper, Box, Typography, IconButton, Modal, Button, TextField, MenuItem, Select, FormControl, InputLabel, ListItemText, Checkbox, OutlinedInput } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { User } from "../../models/User";
 import UserService from "../../services/UserService";
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { MateriaAdmin } from "../../models/MateriaAdmin";
-import { AddCircleOutlineOutlined } from "@mui/icons-material";
+import { AddCircleOutlineOutlined, Edit } from "@mui/icons-material";
 import CloseIcon from '@mui/icons-material/Close';
 
 interface Props {
     user?: User;
+}
+
+const INITIAL_MATERIA: MateriaAdmin = {
+    name: "",
+    year: 1,
+    cuat: 1,
+    correlativas: []
 }
 const MateriasComponent = ({ user }: Props) => {
 
     const history = useHistory();
 
     const [currentUser, setCurrentUser] = useState<User>(user!);
+    const [nuevaMateria, setNuevaMateria] = useState<MateriaAdmin>(INITIAL_MATERIA);
 
     const [openModal, setOpenModal] = useState<boolean>(false);
+
+    useEffect(() => {
+        console.log(nuevaMateria.correlativas)
+    }, [nuevaMateria])
 
     const columns: GridColDef[] = [
         { field: "id", headerName: "ID de materia", width: 110, align: "center", headerAlign: "center", sortable: false },
@@ -27,7 +39,9 @@ const MateriasComponent = ({ user }: Props) => {
         { field: "correlativas", headerName: "correlativas", width: 200, align: "center", headerAlign: "center", sortable: true, valueGetter: (params: GridValueGetterParams) => `${params.row.correlativas.length}` }];
 
     const rows: MateriaAdmin[] = [
-        { id: 5551, name: "Análisis Matemático I", year: 1, cuat: 1, correlativas: [] },
+        { id: "5551", name: "Análisis Matemático I", year: 1, cuat: 1, correlativas: [] },
+        { id: "5912", name: "Elementos de Álgebra y de Geometría", year: 1, cuat: 1, correlativas: [] },
+        { id: "5793", name: "Resolución de Problemas y Algoritmos", year: 1, cuat: 1, correlativas: [] },
     ];
 
     useEffect(() => {
@@ -39,6 +53,19 @@ const MateriasComponent = ({ user }: Props) => {
             });
         }
     }, []);
+
+    const handleChangeCorrelativas = (e: React.ChangeEvent<any>) => {
+        let correlativas = nuevaMateria.correlativas;
+        let index = correlativas.indexOf(e.target.value[0]);
+        console.log("e", e.target.value)
+        console.log(index);
+        if (index > -1) {//only splice array when item is found
+            correlativas.splice(index, 1);
+        } else {
+            correlativas.push(e.target.value);
+        }
+        setNuevaMateria({ ...nuevaMateria, correlativas: correlativas })
+    }
 
     return (
         <>
@@ -70,12 +97,124 @@ const MateriasComponent = ({ user }: Props) => {
             </Grid>
             <Modal open={openModal} >
                 <Box style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: "80%", border: "1px solid black", borderRadius: 3, backgroundColor: "white" }}>
-                    <Box style={{ display: "flex", justifyContent: "space-between" }}>
-                        <Typography >Nueva materia</Typography>
-                        <IconButton onClick={() => setOpenModal(false)}>
-                            <CloseIcon />
-                        </IconButton>
-                    </Box>
+                    <Paper elevation={2} style={{ padding: "1em" }}>
+                        <Box style={{ display: "flex", justifyContent: "space-between" }}>
+                            <Typography variant="h4">Añadir materia</Typography>
+                            <IconButton onClick={() => { setOpenModal(false); setNuevaMateria(INITIAL_MATERIA) }}>
+                                <CloseIcon />
+                            </IconButton>
+                        </Box>
+                        <Box style={{ display: "flex", flexDirection: "row", paddingTop: "1em" }}>
+                            <Typography style={{ marginRight: "1em" }}>Ingrese nombre de la materia</Typography>
+                            <TextField
+                                id="name"
+                                placeholder="Nombre"
+                                variant="outlined"
+                                size="small"
+                                required
+                                value={nuevaMateria.name}
+                                onChange={(e) => setNuevaMateria({ ...nuevaMateria, name: e.target.value })}
+                                style={{ paddingBottom: "0.5em", width: "30%" }}
+                            />
+                        </Box>
+                        <Box style={{ display: "flex", flexDirection: "row", paddingTop: "1em" }}>
+                            <Typography style={{ marginRight: "1em" }}>Seleccionar año</Typography>
+                            <FormControl size="small" style={{ width: "60%" }}>
+                                <Select
+                                    id="year"
+                                    variant="outlined"
+                                    required
+                                    value={nuevaMateria.year}
+                                    onChange={(e) => setNuevaMateria({ ...nuevaMateria, year: Number(e.target.value) })}
+                                    MenuProps={{
+                                        anchorOrigin: {
+                                            vertical: "bottom",
+                                            horizontal: "left"
+                                        },
+                                        transformOrigin: {
+                                            vertical: "top",
+                                            horizontal: "left"
+                                        },
+                                        getContentAnchorEl: null
+                                    }}
+                                >
+                                    <MenuItem value={1}>1ro</MenuItem>
+                                    <MenuItem value={2}>2do</MenuItem>
+                                    <MenuItem value={3}>3ro</MenuItem>
+                                    <MenuItem value={4}>4to</MenuItem>
+                                    <MenuItem value={5}>5to</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Box>
+                        <Box style={{ display: "flex", flexDirection: "row", paddingTop: "1em" }}>
+                            <Typography style={{ marginRight: "1em" }}>Seleccionar Cuatrimestre</Typography>
+                            <FormControl size="small" style={{ width: "60%" }}>
+                                <Select
+                                    id="cuat"
+                                    label="Cuatrimestre"
+                                    variant="outlined"
+                                    required
+                                    value={nuevaMateria.cuat}
+                                    onChange={(e) => setNuevaMateria({ ...nuevaMateria, cuat: Number(e.target.value) })}
+                                    MenuProps={{
+                                        anchorOrigin: {
+                                            vertical: "bottom",
+                                            horizontal: "left"
+                                        },
+                                        transformOrigin: {
+                                            vertical: "top",
+                                            horizontal: "left"
+                                        },
+                                        getContentAnchorEl: null
+                                    }}
+                                >
+                                    <MenuItem value={1}>1ro</MenuItem>
+                                    <MenuItem value={2}>2do</MenuItem>
+                                </Select>
+
+                            </FormControl>
+                        </Box>
+                        <Box style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", paddingTop: "1em" }}>
+                            <Typography style={{ width: "15%" }}>Seleccionar correlativas</Typography>
+                            <FormControl size="small" style={{ width: "100%" }}>
+                                <Select
+                                    id="correlativas"
+                                    variant="outlined"
+                                    multiple
+                                    value={nuevaMateria?.correlativas}
+                                    renderValue={(selected: any) => selected.join(",")}
+                                    onChange={handleChangeCorrelativas}
+                                    MenuProps={{
+                                        anchorOrigin: {
+                                            vertical: "bottom",
+                                            horizontal: "left"
+                                        },
+                                        transformOrigin: {
+                                            vertical: "top",
+                                            horizontal: "left"
+                                        },
+                                        getContentAnchorEl: null
+                                    }}
+                                >
+                                    {
+                                        rows.map((materia) =>
+                                            <MenuItem
+                                                value={materia.id}
+                                            >
+                                                <Checkbox checked={nuevaMateria.correlativas.indexOf(materia?.id!) > -1} />
+                                                <ListItemText primary={materia.name} />
+                                            </MenuItem>)
+                                    }
+                                </Select>
+                            </FormControl>
+
+                        </Box>
+                        <Box style={{ display: "flex", justifyContent: "flex-end", marginTop: "1em" }}>
+                            <Button variant="contained" color="primary">
+                                Guardar
+                            </Button>
+                        </Box>
+                    </Paper>
                 </Box>
 
             </Modal>

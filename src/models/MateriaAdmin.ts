@@ -1,7 +1,7 @@
 export interface MateriaAdmin {
-    id: number;
+    id?: string;
     name: string;
     year: number;
     cuat: number;
-    correlativas: MateriaAdmin[];
+    correlativas: string[];
 }
