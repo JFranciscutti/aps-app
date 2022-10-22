@@ -1,18 +1,20 @@
-import { Grid, Paper, Box, Typography, IconButton, Modal, Button, TextField, MenuItem, Select, FormControl, InputLabel, ListItemText, Checkbox, OutlinedInput } from "@material-ui/core";
+import { Grid, Paper, Box, Typography, IconButton, Modal, Button, TextField, MenuItem, FormControl, InputLabel, ListItemText, Checkbox, OutlinedInput, Select } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { User } from "../../models/User";
 import UserService from "../../services/UserService";
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-import { MateriaAdmin } from "../../models/MateriaAdmin";
+import { Materia } from "../../models/Materia";
 import { AddCircleOutlineOutlined, Edit } from "@mui/icons-material";
 import CloseIcon from '@mui/icons-material/Close';
+import { SelectChangeEvent } from '@mui/material/Select';
+import AdminService from "../../services/AdminService";
 
 interface Props {
     user?: User;
 }
 
-const INITIAL_MATERIA: MateriaAdmin = {
+const INITIAL_MATERIA: Materia = {
     name: "",
     year: 1,
     cuat: 1,
@@ -23,8 +25,9 @@ const MateriasComponent = ({ user }: Props) => {
     const history = useHistory();
 
     const [currentUser, setCurrentUser] = useState<User>(user!);
-    const [nuevaMateria, setNuevaMateria] = useState<MateriaAdmin>(INITIAL_MATERIA);
-
+    const [nuevaMateria, setNuevaMateria] = useState<Materia>(INITIAL_MATERIA);
+    const [correlativas, setCorrelativas] = useState<string[]>([]);
+    const [materias, setMaterias] = useState<Materia[]>([]);
     const [openModal, setOpenModal] = useState<boolean>(false);
 
     useEffect(() => {
@@ -33,16 +36,10 @@ const MateriasComponent = ({ user }: Props) => {
 
     const columns: GridColDef[] = [
         { field: "id", headerName: "ID de materia", width: 110, align: "center", headerAlign: "center", sortable: false },
-        { field: "name", headerName: "Nombre de la materia", width: 200, align: "center", headerAlign: "center", sortable: false },
+        { field: "name", headerName: "Nombre de la materia", width: 500, align: "center", headerAlign: "center", sortable: false },
         { field: "year", headerName: "Año", width: 75, align: "center", headerAlign: "center", sortable: false },
         { field: "cuat", headerName: "Cuatrimestre", width: 120, align: "center", headerAlign: "center", sortable: false },
         { field: "correlativas", headerName: "correlativas", width: 200, align: "center", headerAlign: "center", sortable: true, valueGetter: (params: GridValueGetterParams) => `${params.row.correlativas.length}` }];
-
-    const rows: MateriaAdmin[] = [
-        { id: "5551", name: "Análisis Matemático I", year: 1, cuat: 1, correlativas: [] },
-        { id: "5912", name: "Elementos de Álgebra y de Geometría", year: 1, cuat: 1, correlativas: [] },
-        { id: "5793", name: "Resolución de Problemas y Algoritmos", year: 1, cuat: 1, correlativas: [] },
-    ];
 
     useEffect(() => {
         const email = localStorage.getItem("email");
@@ -52,19 +49,33 @@ const MateriasComponent = ({ user }: Props) => {
                 setCurrentUser(response.data);
             });
         }
+        updateList();
     }, []);
 
-    const handleChangeCorrelativas = (e: React.ChangeEvent<any>) => {
-        let correlativas = nuevaMateria.correlativas;
-        let index = correlativas.indexOf(e.target.value[0]);
-        console.log("e", e.target.value)
-        console.log(index);
-        if (index > -1) {//only splice array when item is found
-            correlativas.splice(index, 1);
-        } else {
-            correlativas.push(e.target.value);
-        }
-        setNuevaMateria({ ...nuevaMateria, correlativas: correlativas })
+    const updateList = () => {
+        AdminService.getMaterias().then((response: any) => {
+            setMaterias(response.data);
+        }).catch((error) => console.log(error))
+    }
+
+    const handleChange = (event: SelectChangeEvent<typeof correlativas>) => {
+        const {
+            target: { value },
+        } = event;
+        setCorrelativas(typeof value === 'string' ? value.split(',') : value);
+    };
+
+    const saveMateria = () => {
+        let materiaFinal = nuevaMateria;
+        materiaFinal.correlativas = correlativas;
+        AdminService.createMateria(materiaFinal).then((response) => {
+            updateList();
+            setOpenModal(false);
+            setNuevaMateria(INITIAL_MATERIA);
+            setCorrelativas([]);
+        }).catch((error) => {
+            console.log(error);
+        })
     }
 
     return (
@@ -81,7 +92,7 @@ const MateriasComponent = ({ user }: Props) => {
                         </Box>
                         <Grid style={{ width: window.innerWidth * 0.7 }}>
                             <DataGrid
-                                rows={rows}
+                                rows={materias}
                                 columns={columns}
                                 pageSize={10}
                                 rowsPerPageOptions={[10]}
@@ -181,9 +192,10 @@ const MateriasComponent = ({ user }: Props) => {
                                     id="correlativas"
                                     variant="outlined"
                                     multiple
-                                    value={nuevaMateria?.correlativas}
+                                    value={correlativas}
                                     renderValue={(selected: any) => selected.join(",")}
-                                    onChange={handleChangeCorrelativas}
+                                    //@ts-ignore
+                                    onChange={handleChange}
                                     MenuProps={{
                                         anchorOrigin: {
                                             vertical: "bottom",
@@ -197,11 +209,11 @@ const MateriasComponent = ({ user }: Props) => {
                                     }}
                                 >
                                     {
-                                        rows.map((materia) =>
+                                        materias.map((materia) =>
                                             <MenuItem
                                                 value={materia.id}
                                             >
-                                                <Checkbox checked={nuevaMateria.correlativas.indexOf(materia?.id!) > -1} />
+                                                <Checkbox checked={correlativas.indexOf(materia?.id!) > -1} />
                                                 <ListItemText primary={materia.name} />
                                             </MenuItem>)
                                     }
@@ -210,7 +222,7 @@ const MateriasComponent = ({ user }: Props) => {
 
                         </Box>
                         <Box style={{ display: "flex", justifyContent: "flex-end", marginTop: "1em" }}>
-                            <Button variant="contained" color="primary">
+                            <Button variant="contained" color="primary" onClick={saveMateria}>
                                 Guardar
                             </Button>
                         </Box>

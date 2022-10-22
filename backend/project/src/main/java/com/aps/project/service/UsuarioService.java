@@ -9,6 +9,7 @@ import io.netty.handler.codec.http2.Http2Error;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -59,5 +60,7 @@ public class UsuarioService {
     }
   }
 
-
+  public List<Usuario> getUserByRole(UserRole role) {
+    return repository.getByRole(role);
+  }
 }

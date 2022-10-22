@@ -7,6 +7,8 @@ import EditDataComponent from "./EditDataComponent";
 import { Roles } from "../utils/Roles";
 import NotasComponent from "./alumno/NotasComponent";
 import MateriasComponent from "./admin/MateriasComponent";
+import ProfesoresComponent from "./admin/ProfesoresComponent";
+import AlumnosComponent from "./admin/AlumnosComponent";
 
 interface Props {
     user?: User;
@@ -88,8 +90,8 @@ const MainComponent = ({ user }: Props) => {
                 {selectedOption === "Mis notas" && user?.role === Roles.ALUMNO && (<NotasComponent />)}
                 {selectedOption === "Examenes" && user?.role === Roles.PROFESOR && (<NotasComponent />)}
                 {selectedOption === "Materias" && user?.role === Roles.ADMIN && (<MateriasComponent />)}
-                {selectedOption === "Alumnos" && user?.role === Roles.ADMIN && (<NotasComponent />)}
-                {selectedOption === "Profesores" && user?.role === Roles.ADMIN && (<NotasComponent />)}
+                {selectedOption === "Alumnos" && user?.role === Roles.ADMIN && (<AlumnosComponent />)}
+                {selectedOption === "Profesores" && user?.role === Roles.ADMIN && (<ProfesoresComponent />)}
             </Grid>
         </Grid>
     )

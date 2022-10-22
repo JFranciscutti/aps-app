@@ -1,5 +1,6 @@
 package com.aps.project.controller;
 
+import com.aps.project.model.UserRole;
 import com.aps.project.model.Usuario;
 import com.aps.project.dto.*;
 import com.aps.project.exceptions.*;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin("http://localhost:3000")
@@ -35,5 +38,10 @@ public class UsuarioController {
   @PostMapping("/get/{email}")
   public ResponseEntity<Usuario> getUser(@PathVariable("email") String email, @RequestBody String password) throws UserNotFoundException, WrongPasswordException {
     return ResponseEntity.ok(service.getUserByEmailAndPassword(email, password));
+  }
+
+  @GetMapping("/get-by-role/{role}")
+  public ResponseEntity<List<Usuario>> getUsers(@PathVariable("role") String role) {
+    return ResponseEntity.ok(service.getUserByRole(UserRole.valueOf(role)));
   }
 }
