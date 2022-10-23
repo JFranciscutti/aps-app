@@ -5,6 +5,7 @@ import { User } from "../../models/User";
 import UserService from "../../services/UserService";
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Materia } from "../../models/Materia";
+import moment from "moment";
 
 
 interface Props {
@@ -22,7 +23,7 @@ const NotasComponent = ({ user }: Props) => {
         { field: "state", headerName: "Estado", width: 200, align: "center", headerAlign: "center", sortable: false },
         { field: "year", headerName: "Año", width: 75, align: "center", headerAlign: "center", sortable: false },
         { field: "cuat", headerName: "Cuatrimestre", width: 120, align: "center", headerAlign: "center", sortable: false },
-        { field: "lastUpdate", headerName: "Última modificación", width: 200, align: "center", headerAlign: "center", sortable: true }];
+        { field: "lastUpdate", headerName: "Última modificación", width: 200, align: "center", headerAlign: "center", sortable: true, valueGetter: (params: GridValueGetterParams) => `${moment(params.row.lastUpdate).format("DD/MM/YYYY h:mm A")}` }];
 
     const rows: Materia[] = [
         { id: "5551", name: "Análisis Matemático I", state: "7 - Aprobado", year: 1, cuat: 2, lastUpdate: new Date() },

@@ -9,6 +9,7 @@ import NotasComponent from "./alumno/NotasComponent";
 import MateriasComponent from "./admin/MateriasComponent";
 import ProfesoresComponent from "./admin/ProfesoresComponent";
 import AlumnosComponent from "./admin/AlumnosComponent";
+import ExamenesComponent from "./profesor/ExamenesComponent";
 
 interface Props {
     user?: User;
@@ -17,7 +18,6 @@ interface Props {
 const ALUMNO_OPTIONS = [
     "Mis datos",
     "Mis notas",
-    "Inscripción a cursadas",
     "Inscripción a examenes"
 ];
 
@@ -88,7 +88,7 @@ const MainComponent = ({ user }: Props) => {
             <Grid item style={{ display: "flex", flexDirection: "column", width: "85%" }}>
                 {selectedOption === "Mis datos" && <EditDataComponent user={user} />}
                 {selectedOption === "Mis notas" && user?.role === Roles.ALUMNO && (<NotasComponent />)}
-                {selectedOption === "Examenes" && user?.role === Roles.PROFESOR && (<NotasComponent />)}
+                {selectedOption === "Examenes" && user?.role === Roles.PROFESOR && (<ExamenesComponent />)}
                 {selectedOption === "Materias" && user?.role === Roles.ADMIN && (<MateriasComponent />)}
                 {selectedOption === "Alumnos" && user?.role === Roles.ADMIN && (<AlumnosComponent />)}
                 {selectedOption === "Profesores" && user?.role === Roles.ADMIN && (<ProfesoresComponent />)}

@@ -30,10 +30,6 @@ const MateriasComponent = ({ user }: Props) => {
     const [materias, setMaterias] = useState<Materia[]>([]);
     const [openModal, setOpenModal] = useState<boolean>(false);
 
-    useEffect(() => {
-        console.log(nuevaMateria.correlativas)
-    }, [nuevaMateria])
-
     const columns: GridColDef[] = [
         { field: "id", headerName: "ID de materia", width: 110, align: "center", headerAlign: "center", sortable: false },
         { field: "name", headerName: "Nombre de la materia", width: 500, align: "center", headerAlign: "center", sortable: false },
