@@ -12,4 +12,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
   Optional<Usuario> getByEmail(String email);
 
   List<Usuario> getByRole(UserRole role);
+
+  Optional<Usuario> getUsuarioById(Long id);
 }

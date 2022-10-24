@@ -63,4 +63,8 @@ public class UsuarioService {
   public List<Usuario> getUserByRole(UserRole role) {
     return repository.getByRole(role);
   }
+
+  public Optional<Usuario> getUsuarioById(Long id) {
+    return repository.getUsuarioById(id);
+  }
 }

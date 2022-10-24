@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MateriaService {
@@ -30,5 +31,9 @@ public class MateriaService {
 
   public List<Materia> getMaterias() {
     return repository.findAll();
+  }
+
+  public Optional<Materia> getMateriaById(Long id) {
+    return repository.getMateriaById(id);
   }
 }

@@ -27,11 +27,6 @@ const NotasComponent = ({ user }: Props) => {
 
     const rows: Materia[] = [
         { id: "5551", name: "Análisis Matemático I", state: "7 - Aprobado", year: 1, cuat: 2, lastUpdate: new Date() },
-        { id: "5551", name: "Análisis Matemático I", state: "7 - Aprobado", year: 1, cuat: 2, lastUpdate: new Date() },
-        { id: "5551", name: "Análisis Matemático I", state: "7 - Aprobado", year: 1, cuat: 2, lastUpdate: new Date() },
-        { id: "5551", name: "Análisis Matemático I", state: "7 - Aprobado", year: 1, cuat: 2, lastUpdate: new Date() },
-        { id: "5551", name: "Análisis Matemático I", state: "7 - Aprobado", year: 1, cuat: 2, lastUpdate: new Date() },
-        { id: "5551", name: "Análisis Matemático I", state: "7 - Aprobado", year: 1, cuat: 2, lastUpdate: new Date() },
     ];
 
     useEffect(() => {

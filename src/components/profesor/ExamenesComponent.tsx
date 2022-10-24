@@ -11,6 +11,7 @@ import { SelectChangeEvent } from '@mui/material/Select';
 import AdminService from "../../services/AdminService";
 import { MesaExamen } from "../../models/MesaExamen";
 import moment from "moment";
+import ProfeService from "../../services/ProfeService";
 
 interface Props {
     user?: User;
@@ -44,34 +45,37 @@ const ExamenesComponent = ({ user }: Props) => {
 
 
     const columns: GridColDef[] = [
-        { field: "materia", headerName: "Materia", width: 500, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${params.row.materia.name}` },
+        { field: "materia", headerName: "Materia", width: 400, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${params.row.materia.name}` },
         { field: "alumnos", headerName: "Alumnos inscriptos", width: 200, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${params.row.alumnos.length}` },
-        { field: "fecha", headerName: "Fecha", width: 100, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${moment(params.row.fecha).format("DD/MM/YYYY h:mm A")}` },
+        { field: "fecha", headerName: "Fecha", width: 200, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${moment(params.row.fecha).format("DD/MM/YYYY h:mm A")}` },
         { field: "inicioInscripcion", headerName: "Fecha inicio de inscripción", width: 200, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${moment(params.row.inicioInscripcion).format("DD/MM/YYYY h:mm A")}` },
         { field: "finInscripcion", headerName: "Fecha fin de inscripción", width: 200, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${moment(params.row.finInscripcion).format("DD/MM/YYYY h:mm A")}` }
     ];
 
     useEffect(() => {
-        const email = localStorage.getItem("email");
-        const password = localStorage.getItem("password");
-        if (!!email && !!password) {
-            UserService.getByEmailAndPassword(email, password).then((response: any) => {
-                setCurrentUser(response.data);
-            });
-        }
         updateList();
     }, []);
 
     const updateList = () => {
         AdminService.getMaterias().then((response: any) => {
             setMaterias(response.data);
-        }).catch((error) => console.log(error))
+        }).catch((error) => console.log(error));
+
+        ProfeService.getMesasByProfesor(currentUser.id!).then((response: any) => {
+            setMesas(response.data)
+        }).catch((error) => console.log(error));
     }
 
     const publicarMateria = () => {
-        console.log(nuevaMesa);
-        setNuevaMesa(INITIAL_MESA);
-        setOpenModal(false);
+        let finalMesa = nuevaMesa;
+        finalMesa.profesor = currentUser;
+
+        ProfeService.createMesa(finalMesa).then((response: any) => {
+            setNuevaMesa(INITIAL_MESA);
+            setOpenModal(false);
+            updateList();
+        }).catch(error => console.log(error))
+
     }
 
     return (

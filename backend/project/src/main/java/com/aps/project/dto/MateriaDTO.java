@@ -9,7 +9,7 @@ import java.util.List;
 @Getter
 @Setter
 public class MateriaDTO {
-  private String id;
+  private Long id;
   private String name;
   private int year;
   private int cuat;
