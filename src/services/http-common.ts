@@ -1,6 +1,7 @@
 import axios from "axios";
+import environment from "../environment.json";
 
 export default axios.create({
-    baseURL: "http://localhost:8080/",
+    baseURL: environment.baseURL,
     headers: { "Content-Type": "application/json" }
 });
