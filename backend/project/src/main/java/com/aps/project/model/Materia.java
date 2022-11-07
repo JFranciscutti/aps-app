@@ -36,5 +36,5 @@ public class Materia {
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(name = "correlativas", joinColumns = @JoinColumn(name = "materia_id"))
   @Column(name = "correlativas")
-  private List<String> correlativas;
+  private List<Long> correlativas;
 }

@@ -2,6 +2,7 @@ package com.aps.project.controller;
 
 import com.aps.project.dto.MesaExamenDTO;
 import com.aps.project.exceptions.UserNotFoundException;
+import com.aps.project.model.Examen;
 import com.aps.project.model.MesaExamen;
 import com.aps.project.service.MesaExamenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +44,8 @@ public class ProfeController {
     return ResponseEntity.ok(mesaExamenService.getAllByAlumno(id));
   }
 
-  //TODO: next sprint
-  //  @PostMapping("/inscripcion/{materiaId}/alumno/{alumnoId}")
-  //  public ResponseEntity<Examen> getMesasByAlumno(@PathVariable("materiaId") Long materiaId, @PathVariable("alumnoId") Long alumnoId)
-  //      throws UserNotFoundException {
-  //    return ResponseEntity.ok(mesaExamenService.inscripcion(materiaId, alumnoId));
-  //  }
+  @GetMapping("/{alumnoId}/inscripcion/{mesaExamenId}")
+  public ResponseEntity<Examen> inscripcionAMateria(@PathVariable("mesaExamenId") Long mesaExamenId, @PathVariable("alumnoId") Long alumnoId) throws Exception {
+    return ResponseEntity.ok(mesaExamenService.inscripcion(mesaExamenId, alumnoId));
+  }
 }

@@ -1,7 +1,7 @@
 import { Button, createStyles, Grid, Link, makeStyles, Paper, TextField, Typography } from "@material-ui/core"
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { UserLogin } from "../models/User";
+import { User, UserLogin } from "../models/User";
 import UserService from "../services/UserService";
 import { Routes } from "../utils/Routes";
 import LoginTitle from "./LoginTitle";
@@ -29,10 +29,16 @@ const Login = () => {
     const [validEmail, setValidEmail] = useState<ValidState>(initialState);
     const [validPassword, setValidPassword] = useState<ValidState>(initialState);
 
+    const [mobileVersion, setMobileVersion] = useState<boolean>(window.innerWidth <= 960);
+
     useEffect(() => {
         setValidEmail({ valid: true, msg: "" });
         setValidPassword({ valid: true, msg: "" });
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        setMobileVersion(window.innerWidth <= 960)
+    }, [window.innerWidth])
 
     const handleCreateAccount = () => {
         history.push(Routes.SIGNUP)
@@ -65,14 +71,30 @@ const Login = () => {
         if (validEmail.valid && validPassword.valid) {
             let data: UserLogin = { email: email, password: password }
             UserService.login(data).then((response: any) => {
-                history.push({ pathname: Routes.HOME, state: { user: response.data } })
-                localStorage.setItem('email', response.data.email);
-                localStorage.setItem('password', response.data.password)
+                if (mobileVersion) {
+                    if (response.data.role !== "ALUMNO") {
+                        alert("Solo alumnos pueden ingresar desde la versión movil")
+                    } else {
+                        onSuccessLogin(response.data)
+                    }
+                }
+                else {
+
+                    onSuccessLogin(response.data)
+                }
+
+
             }).catch((error: any) => {
                 console.log(error);
                 alert("Error al iniciar sesión")
             })
         }
+    }
+
+    const onSuccessLogin = (user: User) => {
+        history.push({ pathname: Routes.HOME, state: { user: user } })
+        localStorage.setItem('email', user.email);
+        localStorage.setItem('password', user.password)
     }
 
     return (
@@ -148,6 +170,15 @@ const useStyles = makeStyles((theme: any) => createStyles({
         padding: "1em",
         height: window.innerHeight * 0.7,
         width: "30%",
-        margin: "2% auto"
+        margin: "2% auto",
+        [theme.breakpoints.down("md")]: {
+            width: "50%",
+        },
+        [theme.breakpoints.down("sm")]: {
+            width: "80%",
+        },
+        [theme.breakpoints.down("xs")]: {
+            width: "90%",
+        },
     }
 }));

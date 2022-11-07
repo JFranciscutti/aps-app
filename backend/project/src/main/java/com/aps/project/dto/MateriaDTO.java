@@ -15,5 +15,5 @@ public class MateriaDTO {
   private int cuat;
   private String state;
   private Date lastUpdate;
-  private List<String> correlativas;
+  private List<Long> correlativas;
 }

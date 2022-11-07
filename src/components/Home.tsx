@@ -1,4 +1,5 @@
 import { Box, Grid, Paper, Typography, makeStyles, createStyles, IconButton } from "@material-ui/core"
+import { Menu } from "@material-ui/icons";
 import { CircleRounded, LogoutOutlined } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -10,12 +11,13 @@ import MainComponent from "./MainComponent";
 
 const Home = () => {
 
-
     const history = useHistory();
 
     const classes = useStyles();
 
     const [loggedUser, setLoggedUser] = useState<User>();
+
+    const [openBar, setOpenBar] = useState<boolean>(window.innerWidth >= 960);
 
     useEffect(() => {
         const email = localStorage.getItem("email");
@@ -24,7 +26,6 @@ const Home = () => {
             UserService.getByEmailAndPassword(email, password).then((response: any) => {
                 setLoggedUser(response.data);
             });
-
         }
     }, []);
 
@@ -37,10 +38,15 @@ const Home = () => {
         <Grid >
             <Paper className={classes.paperContainer}>
                 <Grid className={classes.topBarContainer}>
-                    <Box style={{ display: "flex", flexDirection: "column", backgroundColor: "#93B8F5", padding: "0 0.5em", borderRadius: 6, border: "1px solid black" }}>
+                    <Box>
+                        <IconButton onClick={()=> setOpenBar(!openBar)}>
+                            <Menu/>
+                        </IconButton>
+                    </Box>
+                    <Box className={classes.logoBox}>
                         <Box style={{ display: "flex" }}>
-                            <Typography variant="h4" style={{ fontFamily: "cursive", fontWeight: "bold" }}>SIU GUARANI</Typography>
-                            <Typography variant="h6" style={{ fontFamily: "cursive", paddingTop: "0.7em" }}>v2</Typography>
+                            <Typography style={{ fontFamily: "cursive", fontWeight: "bold", fontSize: "100%" }}>SIU GUARANI</Typography>
+                            <Typography style={{ fontFamily: "cursive", paddingTop: "0.7em", fontSize: "100%" }}>v2</Typography>
                         </Box>
                     </Box>
                     <Box style={{ display: "flex" }}>
@@ -57,8 +63,7 @@ const Home = () => {
 
                 </Grid>
             </Paper>
-            <MainComponent user={loggedUser} />
-            <FooterComponent />
+            <MainComponent user={loggedUser} openBar={openBar}/>
         </Grid>
     )
 }
@@ -104,11 +109,25 @@ const useStyles = makeStyles((theme: any) => createStyles({
         justifyContent: "space-between",
         height: "100%",
         alignItems: "center",
-        padding: "0 2em"
+        padding: "0 2em",
     },
     userNameBox: {
         display: "flex",
         marginRight: "2em",
-        alignItems: "center"
-    }
+        alignItems: "center",
+        [theme.breakpoints.down("sm")]: {
+            display: "none"
+        },
+    },
+    logoBox: {
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: "#93B8F5",
+        padding: "0 0.5em",
+        borderRadius: 6,
+        border: "1px solid black",
+        [theme.breakpoints.down("sm")]: {
+            height: "60%",
+        },
+    },
 }));

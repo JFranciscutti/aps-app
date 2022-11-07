@@ -18,8 +18,8 @@ class ProfeService {
         return http.get<string, Promise<MesaExamen[]>>(`${environment.baseURL}/profe/${id}/mesas`);
     }
 
-    inscribir(materia: Materia, user: User) {
-        return http.post(`${environment.baseURL}/inscripcion/${materia.id}/alumno/${user.id}`);
+    inscribir(mesaExamenId: number, user: User) {
+        return http.get(`${environment.baseURL}/profe/${user.id}/inscripcion/${mesaExamenId}`);
     }
 }
 

@@ -1,13 +1,9 @@
-import { Grid, Paper, Box, Typography, IconButton, Modal, Button, TextField, MenuItem, FormControl, InputLabel, ListItemText, Checkbox, OutlinedInput, Select } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
+import { Grid, Paper, Box, Typography, Button } from "@material-ui/core";
+import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { User } from "../../models/User";
-import UserService from "../../services/UserService";
 import { DataGrid, GridApi, GridCellValue, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { Materia } from "../../models/Materia";
-import { AddCircleOutlineOutlined, Edit } from "@mui/icons-material";
-import CloseIcon from '@mui/icons-material/Close';
-import { SelectChangeEvent } from '@mui/material/Select';
 import AdminService from "../../services/AdminService";
 import { MesaExamen } from "../../models/MesaExamen";
 import moment from "moment";
@@ -45,6 +41,7 @@ const ExamenesAlumnoComponent = ({ user }: Props) => {
 
 
     const columns: GridColDef[] = [
+        { field: "id", headerName: "ID", width: 150, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${params.row.id}` },
         { field: "materia", headerName: "Materia", width: 300, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${params.row.materia.name}` },
         { field: "alumnos", headerName: "Alumnos inscriptos", width: 200, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${params.row.alumnos.length}` },
         { field: "fecha", headerName: "Fecha", width: 200, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${moment(params.row.fecha).format("DD/MM/YYYY h:mm A")}` },
@@ -52,7 +49,7 @@ const ExamenesAlumnoComponent = ({ user }: Props) => {
         { field: "finInscripcion", headerName: "Fecha fin de inscripción", width: 200, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${moment(params.row.finInscripcion).format("DD/MM/YYYY h:mm A")}` },
         {
             field: "",
-            headerName: "Inscripción",
+            headerName: "",
             sortable: false,
             renderCell: (params) => {
                 const onClick = (e: any) => {
@@ -67,7 +64,6 @@ const ExamenesAlumnoComponent = ({ user }: Props) => {
 
                     //@ts-ignore
                     handleInscripcion(thisRow);
-                    //return alert(JSON.stringify(thisRow.materia));
                 };
 
                 return <Button onClick={onClick}>Inscribirse</Button>;
@@ -75,10 +71,11 @@ const ExamenesAlumnoComponent = ({ user }: Props) => {
         },
     ];
 
-    const handleInscripcion = (materia: Materia) => {
-        ProfeService.inscribir(materia, currentUser)
+    const handleInscripcion = (mesaExamen: MesaExamen) => {
+        ProfeService.inscribir(mesaExamen.id!, currentUser)
             .then((response) => {
-                alert(`Inscripto a ${materia.name}!`)
+                alert(`Inscripto a ${mesaExamen.materia}!`);
+                updateList();
             })
             .catch((error) => alert("Error en control de correlativas"))
     }
@@ -115,10 +112,6 @@ const ExamenesAlumnoComponent = ({ user }: Props) => {
                 <Paper elevation={2} style={{ width: "100%", padding: "1em", marginTop: "1em" }}>
                     <Box style={{ display: "flex", justifyContent: "space-between" }}>
                         <Typography variant="h4">Mesas de examen</Typography>
-                        <IconButton onClick={() => setOpenModal(true)}>
-                            <Typography>Añadir mesa</Typography>
-                            <AddCircleOutlineOutlined />
-                        </IconButton>
                     </Box>
                     <Grid style={{ width: window.innerWidth * 0.7 }}>
                         <DataGrid

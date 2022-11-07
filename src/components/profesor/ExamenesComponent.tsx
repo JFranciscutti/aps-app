@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { User } from "../../models/User";
 import UserService from "../../services/UserService";
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridApi, GridCellValue, GridColDef, GridValueFormatterParams, GridValueGetterParams } from '@mui/x-data-grid';
 import { Materia } from "../../models/Materia";
 import { AddCircleOutlineOutlined, Edit } from "@mui/icons-material";
 import CloseIcon from '@mui/icons-material/Close';
@@ -41,15 +41,38 @@ const ExamenesComponent = ({ user }: Props) => {
     const [materias, setMaterias] = useState<Materia[]>([]);
     const [mesas, setMesas] = useState<MesaExamen[]>([]);
     const [openModal, setOpenModal] = useState<boolean>(false);
-
-
+    const [openCorreccionModal, setOpenCorreccionModal] = useState<boolean>(false);
+    const [selectedMesa, setSelectedMesa] = useState<MesaExamen>(INITIAL_MESA);
 
     const columns: GridColDef[] = [
+        { field: "id", headerName: "ID", width: 150, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${params.row.id}` },
         { field: "materia", headerName: "Materia", width: 400, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${params.row.materia.name}` },
-        { field: "alumnos", headerName: "Alumnos inscriptos", width: 200, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${params.row.alumnos.length}` },
+        { field: "alumnos", headerName: "Alumnos inscriptos", width: 200, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => params.row.alumnos, valueFormatter: (params: GridValueFormatterParams) => `${params.value.length}` },
         { field: "fecha", headerName: "Fecha", width: 200, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${moment(params.row.fecha).format("DD/MM/YYYY h:mm A")}` },
         { field: "inicioInscripcion", headerName: "Fecha inicio de inscripción", width: 200, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${moment(params.row.inicioInscripcion).format("DD/MM/YYYY h:mm A")}` },
-        { field: "finInscripcion", headerName: "Fecha fin de inscripción", width: 200, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${moment(params.row.finInscripcion).format("DD/MM/YYYY h:mm A")}` }
+        { field: "finInscripcion", headerName: "Fecha fin de inscripción", width: 200, align: "center", headerAlign: "center", sortable: false, valueGetter: (params: GridValueGetterParams) => `${moment(params.row.finInscripcion).format("DD/MM/YYYY h:mm A")}` },
+        {
+            field: "",
+            headerName: "",
+            sortable: false,
+            renderCell: (params) => {
+                const onClick = (e: any) => {
+                    e.stopPropagation(); // don't select this row after clicking
+
+                    const api: GridApi = params.api;
+                    const thisRow: Record<string, GridCellValue> = {};
+
+                    api.getAllColumns()
+                        .filter((c) => c.field !== "__check__" && !!c)
+                        .forEach((c) => (thisRow[c.field] = params.getValue(params.id, c.field)));
+
+                    //@ts-ignore
+                    handleCorreccion(thisRow);
+                };
+
+                return <Button onClick={onClick}>Corregir</Button>;
+            }
+        }
     ];
 
     useEffect(() => {
@@ -76,6 +99,11 @@ const ExamenesComponent = ({ user }: Props) => {
             updateList();
         }).catch(error => console.log(error))
 
+    }
+
+    const handleCorreccion = (row: MesaExamen) => {
+        setSelectedMesa(row);
+        setOpenCorreccionModal(true);
     }
 
     return (
@@ -195,7 +223,41 @@ const ExamenesComponent = ({ user }: Props) => {
                         </Box>
                     </Paper>
                 </Box>
+            </Modal>
+            <Modal open={openCorreccionModal} >
+                <Box style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: "50%", border: "1px solid black", borderRadius: 3, backgroundColor: "white" }}>
+                    <Paper elevation={2} style={{ padding: "1em" }}>
+                        <Box style={{ display: "flex", justifyContent: "space-between" }}>
+                            <Typography variant="h4">Cargar notas</Typography>
+                            <IconButton onClick={() => { setOpenCorreccionModal(false); setSelectedMesa(INITIAL_MESA) }}>
+                                <CloseIcon />
+                            </IconButton>
+                        </Box>
+                        <Box style={{ display: "flex", flexDirection: "column", paddingTop: "1em" }}>
+                            <Box style={{ display: "flex", flexDirection: "row", backgroundColor: "lightgray", height: "2em", alignItems: "center", margin: "0 5%" }}>
+                                <Typography style={{ marginRight: "1em" }}>LU</Typography>
+                                <Typography style={{ width: "40%" }}>Alumno</Typography>
+                                <Typography>Nota</Typography>
+                            </Box>
+                            {selectedMesa.alumnos.map((alumno) => {
+                                return (
+                                    <Box style={{ display: "flex", flexDirection: "row", height: "3em", alignItems: "center", margin: "0 5%" }}>
+                                        <Typography style={{ marginRight: "1em" }}>{alumno.id}</Typography>
+                                        <Typography style={{ width: "40%" }}>{`${alumno.firstName} ${alumno.lastName}`}</Typography>
+                                        <TextField
+                                            size="small"
+                                            variant="outlined"
+                                            style={{ width: "3em" }}
+                                            inputMode="numeric"
+                                            inputProps={{ maxLength: 1 }}
 
+                                        />
+                                    </Box>
+                                )
+                            })}
+                        </Box>
+                    </Paper>
+                </Box>
             </Modal>
         </>
     )

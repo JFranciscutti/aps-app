@@ -6,10 +6,13 @@ import com.aps.project.model.Examen;
 import com.aps.project.model.Materia;
 import com.aps.project.model.MesaExamen;
 import com.aps.project.model.Usuario;
+import com.aps.project.repo.ExamenRepository;
 import com.aps.project.repo.MesaExamenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +26,12 @@ public class MesaExamenService {
 
   @Autowired
   UsuarioService usuarioService;
+
+  @Autowired
+  ExamenRepository examenRepository;
+
+  @Autowired
+  MesaExamenRepository mesaExamenRepository;
 
   @Autowired
   public MesaExamenService(MesaExamenRepository repository) {
@@ -61,26 +70,34 @@ public class MesaExamenService {
     return repository.findAll();
   }
 
-  public Examen inscripcion(Long materiaId, Long alumnoId) throws UserNotFoundException {
+  @Transactional
+  public Examen inscripcion(Long mesaExamenId, Long alumnoId) throws Exception {
     Examen examen = new Examen();
-    Optional<Usuario> alumno = usuarioService.getUsuarioById(alumnoId);
-    if (alumno.isEmpty()) {
-      throw new UserNotFoundException("Usuario no encontrado", "error");
-    }
-    examen.setAlumno(alumno.get());
+    Usuario alumno = usuarioService.getUsuarioById(alumnoId).orElseThrow(()-> new UserNotFoundException("Usuario no encontrado", "error"));
+    examen.setAlumno(alumno);
 
-    Optional<Materia> materia = materiaService.getMateriaById(materiaId);
-    if (materia.isEmpty()) {
-      throw new UserNotFoundException("Materia no encontrada", "error");
-    }
-    examen.setMateria(materia.get());
+    MesaExamen mesaExamen = mesaExamenRepository.getReferenceById(mesaExamenId);
 
+    examen.setMateria(mesaExamen.getMateria());
+
+    if (!controlCorrelativas(mesaExamen.getMateria(), alumno)) {
+      throw new Exception("Error en control de correlativas");
+    }
+
+    examen = examenRepository.save(examen);
+
+    if (mesaExamen.getAlumnos().contains(alumno)) {
+      throw new Exception("Alumno ya inscripto");
+    }
+    mesaExamen.getAlumnos().add(alumno);
+    mesaExamenRepository.save(mesaExamen);
 
     return examen;
   }
 
-//  private boolean controlCorrelativas(Materia materia, Usuario alumno) {
-//    //TODO: next sprint
-//
-//  }
+  private boolean controlCorrelativas(Materia materia, Usuario alumno) {
+    List<Long> examenesAlumno = alumno.getMateriasAprobadas();
+    List<Long> correlativasMateria = materia.getCorrelativas();
+    return new HashSet<>(examenesAlumno).containsAll(correlativasMateria);
+  }
 }

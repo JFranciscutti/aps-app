@@ -9,6 +9,7 @@ export default function LoginTitle() {
                 <LockOutlined />
             </Avatar>
             <Typography variant="h5">¡Bienvenido a SIU Guarani v2!</Typography>
+            <Typography className={classes.mobileTitle}>Versión móvil, exclusiva para alumnos</Typography>
         </Grid>
     );
 }
@@ -19,7 +20,13 @@ const useStyles = makeStyles((theme: any) => createStyles({
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        paddingBottom: "1em"
+        paddingBottom: "1em",
+    },
+    mobileTitle: {
+        display: "none",
+        [theme.breakpoints.down("sm")]: {
+            display: "flex",
+        },
     },
     avatarColor: {
         backgroundColor: "#1BBD7E"

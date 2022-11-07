@@ -1,4 +1,4 @@
-import { Button, Grid, Typography } from "@material-ui/core";
+import { Button, createStyles, Grid, makeStyles, Typography } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import { User } from "../models/User";
 import UserService from "../services/UserService";
@@ -11,10 +11,27 @@ import ProfesoresComponent from "./admin/ProfesoresComponent";
 import AlumnosComponent from "./admin/AlumnosComponent";
 import ExamenesComponent from "./profesor/ExamenesComponent";
 import ExamenesAlumnoComponent from "./alumno/ExamenesAlumnoComponent";
+import LateralBar from "./LateralBar";
+import FooterComponent from "./FooterComponent";
 
 interface Props {
     user?: User;
+    openBar: boolean;
 }
+
+
+const useStyles = makeStyles((theme: any) => createStyles({
+    container: {
+        display: "flex",
+        flexDirection: "column",
+        width: "85%",
+        justifyContent: "center",
+        [theme.breakpoints.down("sm")]: {
+            width: "100%",
+            margin: "0 10%"
+        },
+    }
+}));
 
 const ALUMNO_OPTIONS = [
     "Mis datos",
@@ -34,7 +51,7 @@ const ADMIN_OPTIONS = [
     "Profesores",
 ];
 
-const MainComponent = ({ user }: Props) => {
+const MainComponent = ({ user, openBar }: Props) => {
 
     const history = useHistory();
 
@@ -43,6 +60,8 @@ const MainComponent = ({ user }: Props) => {
     const [options, setOptions] = useState<string[]>(ALUMNO_OPTIONS);
 
     const [selectedOption, setSelectedOption] = useState<string>(options[0]);
+
+    const classes = useStyles();
 
     useEffect(() => {
         const email = localStorage.getItem("email");
@@ -56,24 +75,6 @@ const MainComponent = ({ user }: Props) => {
         }
     }, []);
 
-    const actionButton = (label: string) => {
-        return (
-            <Button
-                onClick={() => setSelectedOption(label)}
-                variant="contained"
-                style={{ display: "flex", justifyContent: "center", padding: "1em 0" }}
-            >
-                <Typography variant="button">{label}</Typography>
-            </Button>
-        )
-    }
-
-    const LateralBar = () => (
-        <Grid item style={{ display: "flex", flexDirection: "column", width: "15%", borderRight: "1px solid gray" }}>
-            {options.map((option) => { return actionButton(option) })}
-        </Grid>
-    )
-
     const roleSwitch = (role: Roles) => {
         switch (role) {
             case Roles.ALUMNO: setOptions(ALUMNO_OPTIONS); break;
@@ -83,10 +84,14 @@ const MainComponent = ({ user }: Props) => {
         }
     }
 
+    const handleSelectedOption = (label: string) => {
+        setSelectedOption(label);
+    }
+
     return (
         <Grid container>
-            <LateralBar />
-            <Grid item style={{ display: "flex", flexDirection: "column", width: "85%" }}>
+            <LateralBar open={openBar} handleSelectedOption={handleSelectedOption} options={options} />
+            <Grid item className={classes.container}>
                 {selectedOption === "Mis datos" && <EditDataComponent user={user} />}
                 {selectedOption === "Mis notas" && user?.role === Roles.ALUMNO && (<NotasComponent />)}
                 {selectedOption === "Inscripción a examenes" && user?.role === Roles.ALUMNO && (<ExamenesAlumnoComponent user={user} />)}
@@ -95,6 +100,7 @@ const MainComponent = ({ user }: Props) => {
                 {selectedOption === "Alumnos" && user?.role === Roles.ADMIN && (<AlumnosComponent />)}
                 {selectedOption === "Profesores" && user?.role === Roles.ADMIN && (<ProfesoresComponent />)}
             </Grid>
+            <FooterComponent />
         </Grid>
     )
 }
